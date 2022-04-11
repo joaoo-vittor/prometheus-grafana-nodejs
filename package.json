@@ -33,6 +33,7 @@
     "dotenv": "^14.3.2",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
+    "prom-client": "^14.0.1",
     "sequelize": "^6.18.0",
     "validator": "^13.7.0"
   }

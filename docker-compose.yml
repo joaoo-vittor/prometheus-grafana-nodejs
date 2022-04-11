@@ -6,12 +6,47 @@ services:
       context: .
       dockerfile: Dockerfile
     command: 'npm run dev'
+    restart: always
+    container_name: application
+    ports:
+      - 5000:5000
+    environment:
+      - PORT=5000
+    volumes:
+      - .:/app
+    networks:
+      - metrics
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./docker/prometheus/config:/etc/prometheus
+      - ./docker/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - 9090:9090
+    networks:
+      - metrics
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: unless-stopped
     ports:
       - 3000:3000
     volumes:
-      - .:/app
-  #   depends_on:
-  #     - db
+      - ./docker/grafana:/var/lib/grafana
+    networks:
+      - metrics
 
   # db:
   #   image: mysql:5.7.22
@@ -25,3 +60,8 @@ services:
   #     - docker/dbdata:/var/lib/mysql
   #   ports:
   #     - 33066:3306
+
+
+networks:
+  metrics:
+    driver: bridge

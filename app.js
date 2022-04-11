@@ -1,4 +1,5 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import { collectDefaultMetrics, register } from "prom-client";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ class App {
     this.app = express();
     this.middlewares();
     this.routes();
+    collectDefaultMetrics({ register });
   }
 
   middlewares() {
@@ -25,6 +27,10 @@ class App {
     // Your Routes
     // Example:
     this.app.use("/", exampleRouter);
+    this.app.use("/metrics", async (req, res) => {
+      res.set("Content-Type", register.contentType);
+      res.end(await register.metrics());
+    });
   }
 }
 
