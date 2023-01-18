@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     command: 'npm run dev'
     restart: always
-    container_name: application
+    container_name: my_backend
     ports:
       - 5000:5000
     environment:
@@ -18,29 +18,25 @@ services:
       - metrics
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.37.0
     container_name: prometheus
     hostname: prometheus
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./docker/prometheus/config:/etc/prometheus
-      - ./docker/prometheus/data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
     ports:
       - 9090:9090
     networks:
       - metrics
   
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:8.2.6
     container_name: grafana
     hostname: grafana
+    user: "$UID:$GID"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
-    restart: unless-stopped
+    restart: always
     ports:
       - 3000:3000
     volumes:
@@ -48,18 +44,18 @@ services:
     networks:
       - metrics
 
-  # db:
-  #   image: mysql:5.7.22
-  #   restart: always
+  # bd:
+  #   image: postgres:14.1
+  #   container_name: postgres-db
   #   environment:
-  #     MYSQL_DATABASE: product
-  #     MYSQL_USER: root
-  #     MYSQL_PASSWORD: root
-  #     MYSQL_ROOT_PASSWORD: root
-  #   volumes:
-  #     - docker/dbdata:/var/lib/mysql
+  #     - POSTGRES_PASSWORD=mysecretpassword
+  #     - TZ=America/Sao_Paulo
   #   ports:
-  #     - 33066:3306
+  #     - 5433:5432
+  #   volumes:
+  #     - .database:/var/lib/postgresql/data
+  #   networks:
+  #     - network
 
 
 networks:

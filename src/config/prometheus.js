@@ -1,25 +1,32 @@
-import { Counter, Histogram, Summary } from "prom-client";
+import { Counter, Histogram, Summary, Gauge } from "prom-client";
 
 export const request_total_counter = new Counter({
-  name: "request_total",
+  name: "estudo_requests_total",
   help: "Contador de Requisições",
-  labelNames: ["method", "statusCode"],
+  labelNames: ["method", "route", "statusCode"],
+});
+
+export const usuarios_logados = new Gauge({
+  name: "estudo_usuarios_logados_total",
+  help: "Número de usuários logados no momento",
 });
 
 export const request_logs = new Counter({
-  name: "request_logs",
+  name: "estudo_request_logs",
   help: "Logs da aplicação",
   labelNames: ["date", "level", "method", "statusCode", "msg"],
 });
 
 export const request_time_histogram = new Histogram({
-  name: "request_time_seconds",
+  name: "estudo_request_time_seconds_total",
   help: "Tempo de Resposta das Requisições",
-  buckets: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+  // buckets: [0.1, 0.2, 0.3, 0.4, 0.5],
+  labelNames: ["route"],
 });
 
 export const request_time_summary = new Summary({
-  name: "summary_request_time_seconds",
+  name: "estudo_summary_request_time_seconds",
   help: "Tempo de Resposta das Requisições",
-  percentiles: [0.01, 0.05, 0.5, 0.9, 0.95, 0.99, 0.999],
+  percentiles: [0.1, 0.25, 0.5, 0.75, 0.9, 0.99],
+  labelNames: ["route"],
 });

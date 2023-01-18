@@ -6,6 +6,7 @@ dotenv.config();
 import express from "express";
 
 import exampleRouter from "./src/routes/example-route";
+import example2Router from "./src/routes/example-2-route";
 
 class App {
   constructor() {
@@ -27,6 +28,7 @@ class App {
     // Your Routes
     // Example:
     this.app.use("/", exampleRouter);
+    this.app.use("/", example2Router);
     this.app.use("/metrics", async (req, res) => {
       res.set("Content-Type", register.contentType);
       res.end(await register.metrics());
